@@ -1,7 +1,7 @@
 from Classes import Dorker
 query = "passwords" #any main search query to act as a basis for the search
 num = 10 #any integer up to 100
-dorker = Dorker(
+search = Dorker(
     query,
     num, 
     as_filetype="log" #optional search parameters
