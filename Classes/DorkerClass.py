@@ -25,10 +25,10 @@ class Dorker:
         }
         self.foundUrls = []
         #creates the final url from which we will scrape links from during the initialization
-        self.formatUrl(**kwaargs)
+        self.__formatUrl(**kwaargs)
     
     #this function simply logs any errors found during the runtime of the program using this class
-    def logError(self, errorMsg):
+    def __logError(self, errorMsg):
         if not os.path.isfile("Errors.log"):
             with open("Errors.log", "w") as e:
                 e.write("[!] At {t} an error occurred. The error message is as follows.\n{e}\n".format(t=datetime.datetime.now(), e=errorMsg))
@@ -37,7 +37,7 @@ class Dorker:
                 e.write("[!] At {t} an error occurred. The error message is as follows.\n{e}\n".format(t=datetime.datetime.now(), e=errorMsg))
 
     #this function will format the search url based on the given optional paramters and their values
-    def formatUrl(self, **kwaargs):
+    def __formatUrl(self, **kwaargs):
         params = {"q": self.query, "num": self.num}
         for key, value in kwaargs.items():
             if key in self.params:
@@ -60,12 +60,12 @@ class Dorker:
             #finds all urls on the page
             for link in soup.find_all("a", href=True):
                 #limits the urls that are appended to meaningful ones
-                if not "http" in link["href"][0:4] and "search?q={q}".format(q=self.query.replace(" ", "+")) in link["href"]:
+                if not "http" in link["href"][0:4]:
                     results.append(self.host + link["href"])
             
             self.foundUrls = results
         except Exception as e:
-            self.logError(e)
+            self.__logError(e)
     
     def exportToTextFile(self):
         if len(self.foundUrls) <= 0:
@@ -74,14 +74,14 @@ class Dorker:
         else:
             try:
                 #creates a folder to save the text files if there is none
-                self.createFolder("Text Files")
+                self.__createFolder("Text Files")
                 #writes the found urls into the text file line by lines
                 with open(os.path.join("Text Files", self.query+".txt"), "w") as q:
                     q.write("\n".join(self.foundUrls) + "\n")
             except Exception as e:
-                self.logError(e)
+                self.__logError(e)
     
-    def createFolder(self, name):
+    def __createFolder(self, name):
         if not os.path.isdir(name):
             os.mkdir(name)
     
@@ -105,8 +105,8 @@ class Dorker:
                         filename = str(i)
                         i += 1
                     dirName = self.query+" Files"
-                    self.createFolder(dirName)
+                    self.__createFolder(dirName)
                     with open(os.path.join(dirName, filename), "wb") as f:
                         f.write(r.content)
             except Exception as e:
-                self.logError(e)
+                self.__logError(e)
